@@ -4,17 +4,30 @@ using UnityEngine.InputSystem;
 public class PlayerInputValues
 {
     private GameInputs inputActions;
-
+    private static int controllerIndex;
+    public bool Assigned {get; private set;}
     public PlayerInputValues()
     {
-        Init();  
+        inputActions = new GameInputs();
     }
 
-    private void Init()
+    public void Init()
     {
-        inputActions = new GameInputs();
-        inputActions.devices = new[] { Gamepad.all[0] };
-        inputActions.devices = new[] { Keyboard.current};
+        if (Gamepad.all.Count > controllerIndex) // 0 > 0, 1 > 0, 1 > 1, 
+        {
+            Debug.Log(Gamepad.all[controllerIndex].name);
+            inputActions.devices = new[] { Gamepad.all[controllerIndex] };
+            Assigned = true;
+            controllerIndex++;
+            inputActions.Enable();
+        }
+    }
+
+    public void AssignController(InputDevice device)
+    {
+        inputActions.devices = new[] {device};
+        Assigned = true;
+        Debug.Log("Player assigned with: " + device.name);
         inputActions.Enable();
     }
 
@@ -24,6 +37,8 @@ public class PlayerInputValues
         inputActions.Gameplay.Move.canceled += listener.OnMovement;
         inputActions.Gameplay.Shoot.performed += listener.OnFire;
         inputActions.Gameplay.Shoot.canceled += listener.OnFire;
+        inputActions.Gameplay.SpecialShoot.performed += listener.OnSpecialFire;
+        inputActions.Gameplay.SpecialShoot.canceled += listener.OnSpecialFire;
         inputActions.Gameplay.Rotate.performed += listener.OnRotate;
         inputActions.Gameplay.Rotate.canceled += listener.OnRotate;
     }
@@ -34,6 +49,8 @@ public class PlayerInputValues
         inputActions.Gameplay.Move.canceled -= listener.OnMovement;
         inputActions.Gameplay.Shoot.performed -= listener.OnFire;
         inputActions.Gameplay.Shoot.canceled -= listener.OnFire;
+        inputActions.Gameplay.SpecialShoot.performed += listener.OnSpecialFire;
+        inputActions.Gameplay.SpecialShoot.canceled += listener.OnSpecialFire;
         inputActions.Gameplay.Rotate.performed -= listener.OnRotate;
         inputActions.Gameplay.Rotate.canceled -= listener.OnRotate;
     }

@@ -28,7 +28,7 @@ public class @GameInputs : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": ""Rotate"",
-                    ""type"": ""PassThrough"",
+                    ""type"": ""Value"",
                     ""id"": ""c072445c-aa73-41de-9c28-de1d8f407cf4"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
@@ -38,6 +38,14 @@ public class @GameInputs : IInputActionCollection, IDisposable
                     ""name"": ""Shoot"",
                     ""type"": ""Button"",
                     ""id"": ""f6c71dca-5590-4ee6-98ba-1f370200b328"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""SpecialShoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""07cd1dac-7844-4b74-9737-0bae64fc3c0d"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -179,7 +187,7 @@ public class @GameInputs : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""4e175418-717f-465d-921c-ca7fcbc74c75"",
-                    ""path"": ""<Mouse>/leftButton"",
+                    ""path"": ""<Keyboard>/k"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -190,11 +198,33 @@ public class @GameInputs : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""d2001e79-2b48-4dea-a459-2760089e2219"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""path"": ""<Gamepad>/buttonWest"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0be7d620-9b93-4ca4-948c-a5f866a0ae11"",
+                    ""path"": ""<Keyboard>/l"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SpecialShoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""27d8eda0-1842-4d2c-b7d2-6929451fb15e"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SpecialShoot"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -220,6 +250,7 @@ public class @GameInputs : IInputActionCollection, IDisposable
         m_Gameplay_Move = m_Gameplay.FindAction("Move", throwIfNotFound: true);
         m_Gameplay_Rotate = m_Gameplay.FindAction("Rotate", throwIfNotFound: true);
         m_Gameplay_Shoot = m_Gameplay.FindAction("Shoot", throwIfNotFound: true);
+        m_Gameplay_SpecialShoot = m_Gameplay.FindAction("SpecialShoot", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -272,6 +303,7 @@ public class @GameInputs : IInputActionCollection, IDisposable
     private readonly InputAction m_Gameplay_Move;
     private readonly InputAction m_Gameplay_Rotate;
     private readonly InputAction m_Gameplay_Shoot;
+    private readonly InputAction m_Gameplay_SpecialShoot;
     public struct GameplayActions
     {
         private @GameInputs m_Wrapper;
@@ -279,6 +311,7 @@ public class @GameInputs : IInputActionCollection, IDisposable
         public InputAction @Move => m_Wrapper.m_Gameplay_Move;
         public InputAction @Rotate => m_Wrapper.m_Gameplay_Rotate;
         public InputAction @Shoot => m_Wrapper.m_Gameplay_Shoot;
+        public InputAction @SpecialShoot => m_Wrapper.m_Gameplay_SpecialShoot;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -297,6 +330,9 @@ public class @GameInputs : IInputActionCollection, IDisposable
                 @Shoot.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnShoot;
                 @Shoot.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnShoot;
                 @Shoot.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnShoot;
+                @SpecialShoot.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnSpecialShoot;
+                @SpecialShoot.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnSpecialShoot;
+                @SpecialShoot.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnSpecialShoot;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -310,6 +346,9 @@ public class @GameInputs : IInputActionCollection, IDisposable
                 @Shoot.started += instance.OnShoot;
                 @Shoot.performed += instance.OnShoot;
                 @Shoot.canceled += instance.OnShoot;
+                @SpecialShoot.started += instance.OnSpecialShoot;
+                @SpecialShoot.performed += instance.OnSpecialShoot;
+                @SpecialShoot.canceled += instance.OnSpecialShoot;
             }
         }
     }
@@ -328,5 +367,6 @@ public class @GameInputs : IInputActionCollection, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnRotate(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
+        void OnSpecialShoot(InputAction.CallbackContext context);
     }
 }
