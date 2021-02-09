@@ -7,6 +7,7 @@ public class ShipWeapon : MonoBehaviour
     [Header("Physical Properties")]
     [SerializeField] protected Projectile bulletPrefab;
     [SerializeField] protected float bulletTravelDistance;
+    [SerializeField] private Animator animator;
 
     [Header("Weapon Design Properties")]
     [SerializeField, Tooltip("Makes this weapon shoot with the special button instead of the normal shoot button")]
@@ -21,11 +22,16 @@ public class ShipWeapon : MonoBehaviour
     {
         liveProjectiles = new List<Projectile>();
         attackSpeedCommulative = attackSpeed;
+        
+        if (animator)
+            animator.speed = 1 / attackSpeed + 1f;
     }
     public virtual void Shoot()
     {
         if (attackSpeedCommulative < attackSpeed) return;
-
+        
+        if (animator)
+            animator.SetTrigger("Shoot");
 
         // Manage the pool of projectiles
         if (GetProjectile(out Projectile p))
